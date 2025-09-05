@@ -14,7 +14,7 @@ export type Database = {
   }
   public: {
     Tables: {
-      watchlist_items: {
+      watchlist: {
         Row: {
           coin: string
           created_at: string
