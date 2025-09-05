@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Problem
 
-## Getting Started
+Watching crypto market in apps like TradingView and Bybit is hard when you want to watch a high number of coins because you need to swtich screens to change the coin chart, for example if you added 20 coins in favorite list on Bybit it will be super hard to navigate and check all their charts, even when you only want to do it once every 4 hours.
 
-First, run the development server:
+## Solution
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+If a user can swipe to switch coin charts like in TikTok, Youtube shorts then watching any number of coins will be super easy.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Requirement
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. The user should be able to select any number of coins to watch - add/delete coins to favorite list. For now Bybit coins is enough to pick from.
+2. The user should be able to see his coins with the previous 24 hours change percentage and volume.
+3. The user can pick a coin to see its candlestick chart.
+    - The user should be able to change chart intervals.
+    - The user should be able to manipulate the chart - zoom in/out.
+4. The user should be able to swipe up/down to move between coins from his favorite list.
+5. The user should be able to change the order of the coins on this favorite list.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Implementation
 
-## Learn More
+### I. Components
+The React components which will represent the UI using shadcu/ui.
 
-To learn more about Next.js, take a look at the following resources:
+### II. Hooks
+A layer to manage the state of API data from backend and any external APIs.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### III. Services
+The layer that will do the actual API call and any needed data manipulation.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### IV. Middlewares
+The layer between frontend and backend to handle operations like authentication.
 
-## Deploy on Vercel
+### V. Routes
+A layer to handle coming request from the frontend services.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### VI. Controllers
+A layer to handle backend logic like calling the database.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### VII. Supabase
+The infrastructure (Database) and auth layer.
+
+#### 1. Auth
+
+#### 2. Database
