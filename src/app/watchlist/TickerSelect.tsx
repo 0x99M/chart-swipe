@@ -33,13 +33,13 @@ export function TickerSelect({ tickers, value, onChange, open, onOpenChange }: P
       <Popover open={open} onOpenChange={onOpenChange}>
         <PopoverTrigger asChild>
           <Button variant="outline" className="w-full m-0 p-0">
-            {value || "Select ticker…"}
+            {value || "Select Ticker"}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="p-0">
+        <PopoverContent className="w-full p-0">
           <Command>
             <CommandInput
-              placeholder="Search ticker…"
+              placeholder="Search ticker"
               value={input}
               onValueChange={setInput}
             />
@@ -47,7 +47,7 @@ export function TickerSelect({ tickers, value, onChange, open, onOpenChange }: P
               <CommandEmpty>
                 {input.trim() ? "No ticker found" : "Start typing…"}
               </CommandEmpty>
-              {tickers && (
+              {tickers && tickers.length && input.trim() && (
                 <CommandGroup>
                   {tickers.map((t) => (
                     <CommandItem

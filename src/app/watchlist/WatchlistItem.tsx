@@ -19,7 +19,7 @@ export function WatchlistItem({ ticker }: Props) {
         <p>{ticker.symbol}<span className="text-white/30 text-sm" > / USDT</span></p>
         <p className="text-white/30 text-sm" >{formatCompact(volume)} USDT</p>
       </div>
-      <p className={`${color} font-bold tracking-wide`}>{change.toFixed(2)}%</p>
+      <p className={`${color} tracking-wide`}>{change.toFixed(2)}%</p>
     </li>
   );
 }

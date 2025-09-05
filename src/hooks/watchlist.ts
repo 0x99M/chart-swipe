@@ -10,7 +10,7 @@ export function useWatchlist() {
   return useQuery<WatchlistRow[], Error>({
     queryKey: watchlistKeys.all,
     queryFn: watchlistService.getAll,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 60,
   });
 }
 
