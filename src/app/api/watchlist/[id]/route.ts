@@ -1,8 +1,6 @@
+import { NextRequest } from "next/server";
 import { watchlistController } from "@/controllers/watchlist";
 
-export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-  return watchlistController.PUT(req, { params });
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  return watchlistController.PUT(req, { params: await params });
 }
