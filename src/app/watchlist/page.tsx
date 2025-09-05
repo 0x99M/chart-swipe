@@ -4,12 +4,16 @@ import { useState } from "react";
 import { useWatchlist, useAddCoin } from "@/hooks/watchlist";
 import { Button } from "@/components/ui/button";
 import { TickerSelect } from "./TickerSelect";
-import { Loader2Icon } from "lucide-react";
+import { Loader2Icon, Watch } from "lucide-react";
 import { useFilteredBybitTickers } from "@/hooks/bybit";
+import { WatchlistItem } from "./WatchlistItem";
+
+type Sorted = "position" | "gainers" | "losers";
 
 export default function WatchlistPage() {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState("");
+  const [sorted, setSorted] = useState<Sorted>("position");
 
   const { data: watchlist } = useWatchlist();
   const { data: tickers } = useFilteredBybitTickers();
@@ -21,13 +25,31 @@ export default function WatchlistPage() {
     setSelected("");
   };
 
-  const ticker24Change = (symbol: string) => {
-    return tickers?.find((t) => t.symbol === symbol)?.price24hPcnt;
+  const bybitTicker = (coin: string) => {
+    return tickers?.find((t) => t.symbol === coin);
+  };
+
+  const sortedItems = (sorted: Sorted) => {
+    if (sorted === "gainers") {
+      return watchlist?.slice().sort((a, b) => {
+        const pctA = parseFloat(bybitTicker(a.coin)?.price24hPcnt || '0');
+        const pctB = parseFloat(bybitTicker(b.coin)?.price24hPcnt || '0');
+        return pctB - pctA;
+      });
+    }
+    if (sorted === "losers") {
+      return watchlist?.slice().sort((a, b) => {
+        const pctA = parseFloat(bybitTicker(a.coin)?.price24hPcnt || '0');
+        const pctB = parseFloat(bybitTicker(b.coin)?.price24hPcnt || '0');
+        return pctA - pctB;
+      });
+    }
+    return watchlist;
   };
 
   return (
     <div className="w-full flex flex-col items-center p-8">
-      <div className="w-full flex flex-col items-center justify-between gap-4">
+      <div className="w-full flex flex-col items-center justify-between gap-8">
         <div className="w-full flex justify-center items-center gap-2">
           <TickerSelect
             tickers={tickers || []}
@@ -41,19 +63,14 @@ export default function WatchlistPage() {
           </Button>
         </div>
         <ul className="w-full space-y-4">
-          {watchlist?.map((item) => {
-            const change = parseFloat(ticker24Change(item.coin) || "0") * 100;
-            const color = change > 0 ? "text-green-400" : "text-red-500";
-            return (
-              <li
-                key={item.id}
-                className="flex items-center justify-between"
-              >
-                <p>{item.coin}</p>
-                <p className={`${color}`}>{change.toFixed(2)}%</p>
-              </li>
-            );
-          })}
+          <li className="w-full flex justify-between items-center" >
+            <Button variant="outline" onClick={() => setSorted("position")}>Position</Button>
+            <Button variant="outline" onClick={() => setSorted("gainers")}>Gainers</Button>
+            <Button variant="outline" onClick={() => setSorted("losers")}>Losers</Button>
+          </li>
+          {sortedItems(sorted)?.map((item) =>
+            <WatchlistItem key={item.coin} ticker={bybitTicker(item.coin)} />
+          )}
         </ul>
       </div>
     </div>

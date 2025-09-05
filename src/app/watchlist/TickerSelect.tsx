@@ -36,7 +36,7 @@ export function TickerSelect({ tickers, value, onChange, open, onOpenChange }: P
             {value || "Select ticker…"}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0">
+        <PopoverContent className="p-0">
           <Command>
             <CommandInput
               placeholder="Search ticker…"
