@@ -1,15 +1,5 @@
-import { Database } from "@/types/supabase";
 import { createClient } from "@/utils/supabase/server";
-
-type WatchlistInsert = Pick<
-  Database["public"]["Tables"]["watchlist"]["Insert"],
-  "coin"
->;
-
-type WatchlistUpdate = Pick<
-  Database["public"]["Tables"]["watchlist"]["Update"],
-  "position"
->;
+import { WatchlistInsert, WatchlistRow, WatchlistUpdate } from "@/types/watchlist";
 
 async function getAll() {
   const supabase = await createClient();
@@ -20,7 +10,7 @@ async function getAll() {
     .order("position", { ascending: true });
 
   if (error) return Response.json({ error: error.message }, { status: 500 });
-  return Response.json(data);
+  return Response.json(data as WatchlistRow[]);
 }
 
 async function create(req: Request) {
@@ -47,7 +37,7 @@ async function create(req: Request) {
     .single();
 
   if (error) return Response.json({ error: error.message }, { status: 500 });
-  return Response.json(data, { status: 201 });
+  return Response.json(data as WatchlistRow, { status: 201 });
 }
 
 async function update(req: Request, { params }: { params: { id: string } }) {
@@ -75,7 +65,7 @@ async function update(req: Request, { params }: { params: { id: string } }) {
     .order("position", { ascending: true });
 
   if (error) return Response.json({ error: error.message }, { status: 500 });
-  return Response.json(data);
+  return Response.json(data as WatchlistRow[]);
 }
 
 export const watchlistController = {
