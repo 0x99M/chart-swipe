@@ -40,7 +40,7 @@ async function create(req: Request) {
   return Response.json(data as WatchlistRow, { status: 201 });
 }
 
-async function update(req: Request, { params }: { params: { id: number } }) {
+async function update(req: Request, { params }: { params: { id: string } }) {
   const supabase = await createClient();
   const body: WatchlistUpdate = await req.json();
   const { id } = params;
@@ -53,7 +53,7 @@ async function update(req: Request, { params }: { params: { id: number } }) {
     );
 
   const { error: rpcErr } = await supabase.rpc("reorder_watchlist", {
-    p_id: id,
+    p_id: parseInt(id),
     p_position: position,
   });
 
@@ -68,7 +68,7 @@ async function update(req: Request, { params }: { params: { id: number } }) {
   return Response.json(data as WatchlistRow[]);
 }
 
-export async function deleteItem({ params }: { params: { id: number } }) {
+export async function deleteItem({ params }: { params: { id: string } }) {
   const supabase = await createClient();
   const { id } = params;
 
@@ -80,7 +80,7 @@ export async function deleteItem({ params }: { params: { id: number } }) {
   }
 
   const { error: rpcErr } = await supabase.rpc("delete_watchlist_item", {
-    p_id: id,
+    p_id: parseInt(id),
   });
 
   if (rpcErr) {
