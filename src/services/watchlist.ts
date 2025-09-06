@@ -40,4 +40,14 @@ export const watchlistService = {
 
     return response.json();
   },
+
+  delete: async (id: number): Promise<WatchlistRow[]> => {
+    const response = await fetch(`${WATCHLIST_API}/${id}`, { method: "DELETE" });
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete coin - ${response.statusText}`);
+    }
+
+    return response.json();
+  },
 }

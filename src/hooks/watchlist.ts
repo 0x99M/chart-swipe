@@ -35,3 +35,14 @@ export function useMoveCoin() {
     },
   });
 }
+
+export function useDeleteCoin() {
+  const queryClient = useQueryClient();
+
+  return useMutation<WatchlistRow[], Error, number>({
+    mutationFn: watchlistService.delete,
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: watchlistKeys.all });
+    },
+  });
+}

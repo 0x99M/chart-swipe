@@ -68,8 +68,40 @@ async function update(req: Request, { params }: { params: { id: number } }) {
   return Response.json(data as WatchlistRow[]);
 }
 
+export async function deleteItem({ params }: { params: { id: number } }) {
+  const supabase = await createClient();
+  const { id } = params;
+
+  if (!id) {
+    return Response.json(
+      { error: "Missing required field: id (from URL)" },
+      { status: 400 }
+    );
+  }
+
+  const { error: rpcErr } = await supabase.rpc("delete_watchlist_item", {
+    p_id: id,
+  });
+
+  if (rpcErr) {
+    return Response.json({ error: rpcErr.message }, { status: 500 });
+  }
+
+  const { data, error } = await supabase
+    .from("watchlist")
+    .select("*")
+    .order("position", { ascending: true });
+
+  if (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+
+  return Response.json(data as WatchlistRow[]);
+}
+
 export const watchlistController = {
   GET: getAll,
   POST: create,
   PUT: update,
+  DELETE: deleteItem,
 } as const;

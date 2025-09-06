@@ -40,6 +40,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      delete_watchlist_item: {
+        Args: { p_id: number }
+        Returns: undefined
+      }
       reorder_watchlist: {
         Args: { p_id: number; p_position: number }
         Returns: undefined
