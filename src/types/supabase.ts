@@ -41,7 +41,7 @@ export type Database = {
     }
     Functions: {
       reorder_watchlist: {
-        Args: { id: string; position: number }
+        Args: { p_id: number; p_position: number }
         Returns: undefined
       }
     }

@@ -40,7 +40,7 @@ async function create(req: Request) {
   return Response.json(data as WatchlistRow, { status: 201 });
 }
 
-async function update(req: Request, { params }: { params: { id: string } }) {
+async function update(req: Request, { params }: { params: { id: number } }) {
   const supabase = await createClient();
   const body: WatchlistUpdate = await req.json();
   const { id } = params;
@@ -53,8 +53,8 @@ async function update(req: Request, { params }: { params: { id: string } }) {
     );
 
   const { error: rpcErr } = await supabase.rpc("reorder_watchlist", {
-    id,
-    position,
+    p_id: id,
+    p_position: position,
   });
 
   if (rpcErr) return Response.json({ error: rpcErr.message }, { status: 500 });

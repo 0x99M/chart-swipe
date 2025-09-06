@@ -9,5 +9,5 @@ export type WatchlistInsert = Pick<
 
 export type WatchlistUpdate = Pick<
   Database["public"]["Tables"]["watchlist"]["Update"],
-  "position"
+  "id" | "position"
 >;

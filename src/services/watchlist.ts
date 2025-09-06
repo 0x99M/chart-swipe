@@ -1,4 +1,4 @@
-import { WatchlistInsert, WatchlistRow } from "@/types/watchlist";
+import { WatchlistInsert, WatchlistRow, WatchlistUpdate } from "@/types/watchlist";
 
 const WATCHLIST_API = "/api/watchlist";
 
@@ -21,7 +21,21 @@ export const watchlistService = {
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to add coin - ${response.statusText}`);
+      throw new Error(`Failed to create coin - ${response.statusText}`);
+    }
+
+    return response.json();
+  },
+
+  update: async (coin: WatchlistUpdate): Promise<WatchlistRow[]> => {
+    const response = await fetch(`${WATCHLIST_API}/${coin.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(coin),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to update coin - ${response.statusText}`);
     }
 
     return response.json();

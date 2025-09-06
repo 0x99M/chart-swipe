@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useWatchlist, useAddCoin } from "@/hooks/watchlist";
+import { useWatchlist, useAddCoin, useMoveCoin } from "@/hooks/watchlist";
 import { Button } from "@/components/ui/button";
 import { TickerSelect } from "./TickerSelect";
 import { ChevronsUpDown, Loader2Icon } from "lucide-react";
@@ -18,7 +18,9 @@ export default function WatchlistPage() {
 
   const { data: watchlist, isLoading: isLoadingWatchlist } = useWatchlist();
   const { data: tickers, isLoading: isLoadingBybitTickers } = useFilteredBybitTickers();
+
   const { mutate: addCoin, isPending: adding } = useAddCoin();
+  const { mutate: moveCoin, isPending: moving } = useMoveCoin();
 
   const tickerMap = useMemo(() => {
     if (!tickers) return new Map<string, BybitTicker>();
@@ -52,6 +54,14 @@ export default function WatchlistPage() {
     return watchlist;
   };
 
+  const moveItemToTop = (id: number) => {
+    moveCoin({ id, position: 1 });
+  };
+
+  const removeItem = (coin: string) => {
+
+  };
+
   return (
     <div className="w-full flex flex-col items-center p-8">
       <div className="w-full flex flex-col items-center justify-between gap-8">
@@ -67,10 +77,13 @@ export default function WatchlistPage() {
             {adding ? <Loader2Icon className="h-4 w-4 animate-spin" /> : "+"}
           </Button>
         </div>
-        {isLoadingWatchlist || isLoadingBybitTickers ? (
+        {isLoadingWatchlist || isLoadingBybitTickers || moving ? (
           <div className="w-full h-16 flex flex-col justify-center items-center gap-4">
             <Loader2Icon className="h-8 w-8 animate-spin" />
-            {isLoadingWatchlist ? "Loading watchlist…" : "Loading tickers…"}
+            {isLoadingWatchlist ?
+              "Loading watchlist…" :
+              isLoadingBybitTickers ? "Loading tickers…" : "Moving…"
+            }
           </div>
         ) : (
           <ul className="w-full space-y-4">
@@ -84,7 +97,12 @@ export default function WatchlistPage() {
               </div>
             </li>
             {sortedItems(sorted)?.map((item) =>
-              <WatchlistItem key={item.coin} ticker={tickerMap.get(item.coin)} />
+              <WatchlistItem
+                key={item.coin}
+                onRemove={() => { }}
+                onMoveToTop={() => moveItemToTop(item.id)}
+                ticker={tickerMap.get(item.coin)}
+              />
             )}
           </ul>
         )}
