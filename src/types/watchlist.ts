@@ -11,3 +11,5 @@ export type WatchlistUpdate = Pick<
   Database["public"]["Tables"]["watchlist"]["Update"],
   "id" | "position"
 >;
+
+export type Sort = "position" | "gainers" | "losers";

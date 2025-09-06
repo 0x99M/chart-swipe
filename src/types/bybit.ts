@@ -24,3 +24,29 @@ export interface BybitTicker {
   volume24h: string;
   usdIndexPrice: string;
 }
+
+export interface BybitGetCandlesRequest {
+  symbol: string;
+  interval: string;
+  limit: number;
+}
+
+export interface BybitGetCandlesResponse {
+  retCode: number;
+  retMsg: string;
+  result: {
+    symbol: string;
+    category: string;
+    list: string[][];
+  };
+  retExtInfo: object;
+  time: number;
+}
+
+export interface BybitCandle {
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  time: number;
+}
