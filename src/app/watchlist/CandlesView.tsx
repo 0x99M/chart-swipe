@@ -1,18 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { BybitCandle } from "@/bybit/bybit.types";
 import { createChart, IChartApi, ISeriesApi, ColorType, CandlestickSeries, UTCTimestamp } from "lightweight-charts";
 
-interface TradingViewChartProps {
+type Props = {
   candles: BybitCandle[];
 }
 
-export default function TradingViewChart({ candles }: TradingViewChartProps) {
+export default function CandlesView({ candles }: Props) {
   const chartContainerRef = useRef<HTMLDivElement>(null)
   const chartRef = useRef<IChartApi | null>(null)
   const candleSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null)
-  const [hoveredCandleData, setHoveredCandleData] = useState<BybitCandle>(candles[0]);
 
   useEffect(() => {
     if (!chartContainerRef.current) return
@@ -40,7 +39,7 @@ export default function TradingViewChart({ candles }: TradingViewChartProps) {
         visible: false,
       },
       crosshair: {
-        mode: 0,
+        mode: 2,
       },
       localization: {
         dateFormat: "yyyy-MM-dd",
@@ -59,18 +58,6 @@ export default function TradingViewChart({ candles }: TradingViewChartProps) {
       priceLineVisible: false,
     });
 
-    chart.subscribeCrosshairMove(param => {
-      if (param.time) {
-        const dataPoint = param.seriesData.get(newSeries);
-        if (dataPoint) {
-          setHoveredCandleData(dataPoint as BybitCandle);
-        } else {
-          setHoveredCandleData(candles[0]);
-        }
-      } else {
-        setHoveredCandleData(candles[0]);
-      }
-    });
     candleSeriesRef.current = newSeries;
 
     const resizeObserver = new ResizeObserver(entries => {
@@ -105,13 +92,6 @@ export default function TradingViewChart({ candles }: TradingViewChartProps) {
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
-      <div className="w-full flex justify-center items-center gap-4 text-xs text-center">
-        <div>O: {hoveredCandleData?.open}</div>
-        <div>H: {hoveredCandleData?.high}</div>
-        <div>L: {hoveredCandleData?.low}</div>
-        <div>C: {hoveredCandleData?.close}</div>
-        <div>Ch: {((hoveredCandleData?.close - hoveredCandleData?.open) / hoveredCandleData?.open * 100).toFixed(2)}%</div>
-      </div>
       <div
         ref={chartContainerRef}
         className="w-full aspect-square"

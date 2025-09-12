@@ -2,11 +2,12 @@
 
 import { useRef, useState } from "react";
 import { useWatchlist } from "@/watchlist/watchlist.hooks";
-import TradingViewChart from "./TradingViewChart";
+import CandlesView from "./CandlesView";
 import { useBybitCandles, useBybitTickersMap } from "@/bybit/bybit.hooks";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { useWatchlistStore } from "@/watchlist/watchlist.store";
+import { formatCompact } from "@/shared/numbers.utils";
 
 type Interval = "5" | "15" | "60" | "240" | "D" | "W";
 
@@ -35,6 +36,7 @@ export default function Chart() {
 
   const sortedSymbols = getSortedSymbols(tickersMap || {}, watchlist || []);
   const symbol = sortedSymbols[index]?.coin ?? "BTC";
+  const symbolData = tickersMap ? tickersMap[symbol] : null;
 
   const { data: candles } = useBybitCandles({
     symbol: symbol,
@@ -74,6 +76,20 @@ export default function Chart() {
       <Button onClick={closeChart} variant="ghost" className="m-0 p-0" >
         <X className="h-4 w-4" />
       </Button>
+      <div className="w-full p-4 flex justify-between items-center" >
+        <div className="flex flex-col justify-center items-start" >
+          <span className="font-bold text-lg" >{symbol}/USDT</span>
+          <span >
+            {symbolData && (parseFloat(symbolData.price24hPcnt) * 100).toFixed(2)}%
+          </span>
+        </div>
+        <div className="flex flex-col justify-center items-end" >
+          <span className="font-bold text-lg" >{symbolData && symbolData.lastPrice}</span>
+          <span className="text-white/30 text-sm" >
+            {symbolData && formatCompact(parseFloat(symbolData.volume24h))} USDT
+          </span>
+        </div>
+      </div>
       <div className="flex gap-4 justify-center items-center text-xs" >
         {intervals.map((interval) => (
           <div
@@ -89,7 +105,7 @@ export default function Chart() {
           </div>
         ))}
       </div>
-      <TradingViewChart candles={candles || []} />
+      <CandlesView candles={candles || []} />
     </div>
   );
 }
