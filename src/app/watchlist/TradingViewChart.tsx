@@ -5,14 +5,14 @@ import { BybitCandle } from "@/bybit/bybit.types";
 import { createChart, IChartApi, ISeriesApi, ColorType, CandlestickSeries, UTCTimestamp } from "lightweight-charts";
 
 interface TradingViewChartProps {
-  candles: BybitCandle[] | undefined;
+  candles: BybitCandle[];
 }
 
 export default function TradingViewChart({ candles }: TradingViewChartProps) {
   const chartContainerRef = useRef<HTMLDivElement>(null)
   const chartRef = useRef<IChartApi | null>(null)
   const candleSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null)
-  const [hoveredCandleData, setHoveredCandleData] = React.useState<BybitCandle | null>(null);
+  const [hoveredCandleData, setHoveredCandleData] = React.useState<BybitCandle>(candles[0]);
 
   useEffect(() => {
     if (!chartContainerRef.current) return
@@ -65,10 +65,10 @@ export default function TradingViewChart({ candles }: TradingViewChartProps) {
         if (dataPoint) {
           setHoveredCandleData(dataPoint as BybitCandle);
         } else {
-          setHoveredCandleData(null);
+          setHoveredCandleData(candles[0]);
         }
       } else {
-        setHoveredCandleData(null);
+        setHoveredCandleData(candles[0]);
       }
     });
     candleSeriesRef.current = newSeries;
@@ -104,22 +104,19 @@ export default function TradingViewChart({ candles }: TradingViewChartProps) {
   }, [candles]);
 
   return (
-    <div className="w-screen flex flex-col justify-center items-center">
+    <div className="w-full flex flex-col justify-center items-center">
+      <div className="w-full flex justify-center items-center gap-4 text-xs text-center">
+        <div>O: {hoveredCandleData?.open}</div>
+        <div>H: {hoveredCandleData?.high}</div>
+        <div>L: {hoveredCandleData?.low}</div>
+        <div>C: {hoveredCandleData?.close}</div>
+        <div>Ch: {((hoveredCandleData?.close - hoveredCandleData?.open) / hoveredCandleData?.open * 100).toFixed(2)}%</div>
+      </div>
       <div
         ref={chartContainerRef}
         className="w-full aspect-square"
-      // style={{ minHeight: "300px", display: "flex", justifyContent: "center", alignItems: "center" }}
       >
       </div>
-      {hoveredCandleData && (
-        <div className="absolute flex gap-4 top-2 left-2 p-2 rounded text-xs">
-          <div>Open: {hoveredCandleData.open}</div>
-          <div>High: {hoveredCandleData.high}</div>
-          <div>Low: {hoveredCandleData.low}</div>
-          <div>Close: {hoveredCandleData.close}</div>
-          <div>Change: {((hoveredCandleData.close - hoveredCandleData.open) / hoveredCandleData.open * 100).toFixed(2)}%</div>
-        </div>
-      )}
     </div>
   );
 }
