@@ -1,11 +1,11 @@
 "use client";
 
-import { useWatchlist } from "@/hooks/watchlist";
+import { useWatchlist } from "@/watchlist/watchlist.hooks";
 import TradingViewChart from "./TradingViewChart";
-import { useBybitCandles } from "@/hooks/bybit";
-import { Sort } from "@/types/watchlist";
-import { sortedWatchlist } from "@/utils/watchlist";
-import { BybitTicker } from "@/types/bybit";
+import { useBybitCandles } from "@/bybit/bybit.hooks";
+import { Sort } from "@/watchlist/watchlist.types";
+import { sortedWatchlist } from "@/watchlist/watchlist.utils";
+import { BybitTicker } from "@/bybit/bybit.types";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 

@@ -1,4 +1,4 @@
-import { BybitGetCandlesRequest, BybitGetCandlesResponse, BybitGetTickersResponse, BybitTicker } from "@/types/bybit";
+import { BybitGetCandlesRequest, BybitGetCandlesResponse, BybitGetTickersResponse, BybitTicker } from "./bybit.types";
 
 const BYBIT_BASE_API = "https://api.bybit.com/v5/market";
 const BYBIT_KLINE_API = `${BYBIT_BASE_API}/kline`;

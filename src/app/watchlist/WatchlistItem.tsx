@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from "@/components/ui/context-menu";
-import { BybitTicker } from "@/types/bybit";
-import { formatCompact } from "@/utils/numbers";
+import { BybitTicker } from "@/bybit/bybit.types";
+import { formatCompact } from "@/shared/numbers.utils";
 import { ArrowUpToLine, StarOff } from "lucide-react";
 
 type Props = {

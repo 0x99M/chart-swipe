@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { BybitCandle } from "@/types/bybit";
+import { BybitCandle } from "@/bybit/bybit.types";
 import { createChart, IChartApi, ISeriesApi, ColorType, CandlestickSeries, UTCTimestamp } from "lightweight-charts";
 
 interface TradingViewChartProps {

@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { useWatchlist, useAddCoin, useMoveCoin, useDeleteCoin } from "@/hooks/watchlist";
+import { useWatchlist, useAddCoin, useMoveCoin, useDeleteCoin } from "@/watchlist/watchlist.hooks";
 import { Button } from "@/components/ui/button";
 import { TickerSelect } from "./TickerSelect";
 import { ChevronsUpDown, Loader2Icon } from "lucide-react";
 import { WatchlistItem } from "./WatchlistItem";
-import { BybitTicker } from "@/types/bybit";
-import { Sort } from "@/types/watchlist";
-import { sortedWatchlist } from "@/utils/watchlist";
+import { BybitTicker } from "@/bybit/bybit.types";
+import { Sort } from "@/watchlist/watchlist.types";
+import { sortedWatchlist } from "@/watchlist/watchlist.utils";
 
 type Props = {
   bybitTickersMap: Map<string, BybitTicker>;

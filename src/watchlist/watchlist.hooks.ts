@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { WatchlistInsert, WatchlistRow, WatchlistUpdate } from "@/types/watchlist";
-import { watchlistService } from "@/services/watchlist";
+import { WatchlistInsert, WatchlistRow, WatchlistUpdate } from "./watchlist.types";
+import { watchlistService } from "./watchlist.service";
 
 const watchlistKeys = {
   all: ["watchlist"] as const,

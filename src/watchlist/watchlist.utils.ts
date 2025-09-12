@@ -1,5 +1,5 @@
-import { BybitTicker } from "@/types/bybit";
-import { Sort, WatchlistRow } from "@/types/watchlist";
+import { BybitTicker } from "@/bybit/bybit.types";
+import { Sort, WatchlistRow } from "./watchlist.types";
 
 export const sortedWatchlist =
   (watchlist: WatchlistRow[], infoMap: Map<string, BybitTicker>, sorted: Sort) => {

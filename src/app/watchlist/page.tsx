@@ -3,9 +3,9 @@
 import { useMemo, useState } from "react";
 import Watchlist from "./Watchlist";
 import Chart from "./Chart";
-import { Sort } from "@/types/watchlist";
-import { useFilteredBybitTickers } from "@/hooks/bybit";
-import { BybitTicker } from "@/types/bybit";
+import { Sort } from "@/watchlist/watchlist.types";
+import { useFilteredBybitTickers } from "@/bybit/bybit.hooks";
+import { BybitTicker } from "@/bybit/bybit.types";
 
 export default function WatchlistPage() {
   const [sort, setSort] = useState<Sort>("position");
@@ -24,7 +24,7 @@ export default function WatchlistPage() {
 
   const bybitTickersMap = useMemo(() => {
     if (!tickers) return new Map<string, BybitTicker>();
-    return new Map<string, BybitTicker>(tickers.map((t) => [t.symbol, t]));
+    return new Map<string, BybitTicker>(tickers.map((t: BybitTicker) => [t.symbol, t]));
   }, [tickers]);
 
   if (isLoadingBybitTickers) {

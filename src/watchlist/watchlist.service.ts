@@ -1,4 +1,4 @@
-import { WatchlistInsert, WatchlistRow, WatchlistUpdate } from "@/types/watchlist";
+import { WatchlistInsert, WatchlistRow, WatchlistUpdate } from "./watchlist.types";
 
 const WATCHLIST_API = "/api/watchlist";
 

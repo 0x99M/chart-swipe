@@ -1,5 +1,5 @@
-import { bybitService } from "@/services/bybit";
-import { BybitCandle, BybitGetCandlesRequest, BybitTicker } from "@/types/bybit";
+import { bybitService } from "@/bybit/bybit.service";
+import { BybitCandle, BybitGetCandlesRequest, BybitTicker } from "@/bybit/bybit.types";
 import { useQuery } from "@tanstack/react-query";
 
 const bybitKeys = {

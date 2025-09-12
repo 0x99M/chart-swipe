@@ -1,4 +1,4 @@
-import { Database } from "./supabase";
+import { Database } from "@/shared/shared.types";
 
 export type WatchlistRow = Database["public"]["Tables"]["watchlist"]["Row"];
 

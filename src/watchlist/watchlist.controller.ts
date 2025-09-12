@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
-import { WatchlistInsert, WatchlistRow, WatchlistUpdate } from "@/types/watchlist";
+import { WatchlistInsert, WatchlistRow, WatchlistUpdate } from "./watchlist.types";
 
 async function getAll() {
   const supabase = await createClient();

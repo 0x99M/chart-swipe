@@ -15,7 +15,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
-import { BybitTicker } from "@/types/bybit";
+import { BybitTicker } from "@/bybit/bybit.types";
 
 type Props = {
   tickers: BybitTicker[];

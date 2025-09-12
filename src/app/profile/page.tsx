@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { signout } from "@/utils/auth";
+import { signout } from "@/shared/auth.utils";
 
 export default function Profile() {
   return (
