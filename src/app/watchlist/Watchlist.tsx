@@ -61,7 +61,7 @@ export default function Watchlist() {
             {isLoadingWatchlist ?
               "Loading watchlist…" :
               moving ?
-                "Moving…" : "deleting…"
+                "Moving…" : "Deleting…"
             }
           </div>
         ) : (
@@ -84,6 +84,7 @@ export default function Watchlist() {
                 />
               </li>
             )}
+            <li className="h-8 opacity-0" ></li>
           </ul>
         )}
       </div>

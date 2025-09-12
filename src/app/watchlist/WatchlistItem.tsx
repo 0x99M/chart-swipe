@@ -30,7 +30,10 @@ export function WatchlistItem({ ticker, onRemove, onMoveToTop }: Props) {
           <p className={`${color} tracking-wide`}>{change.toFixed(2)}%</p>
         </div>
       </ContextMenuTrigger>
-      <ContextMenuContent className="h-12 w-20 flex justify-center items-center gap-4" >
+      <ContextMenuContent
+        onClick={(e) => e.stopPropagation()}
+        className="h-12 w-20 flex justify-center items-center gap-4"
+      >
         <Button
           variant="ghost"
           className="h-4 w-4 m-0 p-0"
