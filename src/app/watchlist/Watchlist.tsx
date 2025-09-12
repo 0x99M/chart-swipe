@@ -1,26 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { useWatchlist, useAddCoin, useMoveCoin, useDeleteCoin } from "@/watchlist/watchlist.hooks";
 import { Button } from "@/components/ui/button";
 import { TickerSelect } from "./TickerSelect";
 import { ChevronsUpDown, Loader2Icon } from "lucide-react";
 import { WatchlistItem } from "./WatchlistItem";
-import { BybitTicker } from "@/bybit/bybit.types";
-import { Sort } from "@/watchlist/watchlist.types";
-import { sortedWatchlist } from "@/watchlist/watchlist.utils";
+import { useBybitTickersMap } from "@/bybit/bybit.hooks";
+import { useWatchlistStore } from "@/watchlist/watchlist.store";
+import { useWatchlist, useAddCoin, useMoveCoin, useDeleteCoin } from "@/watchlist/watchlist.hooks";
 
-type Props = {
-  bybitTickersMap: Map<string, BybitTicker>;
-  openChart: (index: number, so: Sort) => void;
-};
-
-export default function Watchlist({ bybitTickersMap, openChart }: Props) {
-  const [open, setOpen] = useState(false);
+export default function Watchlist() {
   const [selected, setSelected] = useState("");
-  const [sort, setSort] = useState<Sort>("position");
+  const [isSeletionMenuOpen, setIsSeletionMenuOpen] = useState(false);
 
   const { data: watchlist, isLoading: isLoadingWatchlist } = useWatchlist();
+  const { data: tickersMap, isLoading: isLoadingBybitTickers } = useBybitTickersMap();
+
+  const { getSortedWatchlist: getSortedSymbols, sort, setSort, openChart } = useWatchlistStore();
+
+  const sortedSymbols = getSortedSymbols(tickersMap || {}, watchlist || []);
 
   const { mutate: addCoin, isPending: adding } = useAddCoin();
   const { mutate: moveCoin, isPending: moving } = useMoveCoin();
@@ -47,17 +45,17 @@ export default function Watchlist({ bybitTickersMap, openChart }: Props) {
       <div className="w-full flex flex-col items-center justify-between gap-8">
         <div className="w-full flex justify-center items-center gap-2">
           <TickerSelect
-            tickers={[...bybitTickersMap.values()]}
+            tickers={Object.values(tickersMap ?? {})}
             value={selected}
             onChange={setSelected}
-            open={open}
-            onOpenChange={setOpen}
+            open={isSeletionMenuOpen}
+            onOpenChange={setIsSeletionMenuOpen}
           />
           <Button onClick={handleAdd} disabled={!selected || adding}>
             {adding ? <Loader2Icon className="h-4 w-4 animate-spin" /> : "+"}
           </Button>
         </div>
-        {isLoadingWatchlist || moving || deleting ? (
+        {isLoadingBybitTickers || isLoadingWatchlist || moving || deleting ? (
           <div className="w-full h-16 flex flex-col justify-center items-center gap-4">
             <Loader2Icon className="h-8 w-8 animate-spin" />
             {isLoadingWatchlist ?
@@ -77,12 +75,12 @@ export default function Watchlist({ bybitTickersMap, openChart }: Props) {
                 <p>Change</p><ChevronsUpDown className="h-4 w-4" />
               </div>
             </li>
-            {sortedWatchlist(watchlist || [], bybitTickersMap, sort)?.map((item, i) =>
-              <li key={item.coin} onClick={() => openChart(i, sort)} >
+            {sortedSymbols.map((item, i) =>
+              <li key={item.coin} onClick={() => openChart(i)} >
                 <WatchlistItem
                   onRemove={() => deleteCoin(item.id)}
                   onMoveToTop={() => moveCoin({ id: item.id, position: 1 })}
-                  ticker={bybitTickersMap.get(item.coin)}
+                  ticker={tickersMap && tickersMap[item.coin] ? tickersMap[item.coin] : undefined}
                 />
               </li>
             )}

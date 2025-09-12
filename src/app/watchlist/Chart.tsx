@@ -2,25 +2,18 @@
 
 import { useWatchlist } from "@/watchlist/watchlist.hooks";
 import TradingViewChart from "./TradingViewChart";
-import { useBybitCandles } from "@/bybit/bybit.hooks";
-import { Sort } from "@/watchlist/watchlist.types";
-import { sortedWatchlist } from "@/watchlist/watchlist.utils";
-import { BybitTicker } from "@/bybit/bybit.types";
+import { useBybitCandles, useBybitTickersMap } from "@/bybit/bybit.hooks";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import { useWatchlistStore } from "@/watchlist/watchlist.store";
 
-type Props = {
-  index: number;
-  sort: Sort;
-  bybitTickersMap: Map<string, BybitTicker>;
-  closeChart: () => void;
-};
+export default function Chart() {
+  const { data: watchlist } = useWatchlist();
+  const { data: tickersMap } = useBybitTickersMap();
 
-export default function Chart({ index, sort, bybitTickersMap, closeChart }: Props) {
-  const { data } = useWatchlist();
-
-  const watchlist = sortedWatchlist(data || [], bybitTickersMap, sort);
-  const symbol = watchlist?.[index]?.coin ?? "BTC";
+  const { getSortedWatchlist: getSortedSymbols, closeChart, chartIndex: index } = useWatchlistStore();
+  const sortedSymbols = getSortedSymbols(tickersMap || {}, watchlist || []);
+  const symbol = sortedSymbols[index]?.coin ?? "BTC";
 
   const { data: candles } = useBybitCandles({
     symbol: symbol,
