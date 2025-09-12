@@ -26,7 +26,7 @@ export function useBybitTickersMap() {
 
 export function useBybitCandles(request: BybitGetCandlesRequest) {
   return useQuery<BybitCandle[], Error>({
-    queryKey: [...bybitKeys.candles, request.symbol],
+    queryKey: [...bybitKeys.candles, request.symbol, request.interval],
     queryFn: async () => {
       const response = await bybitService.getCandles(request);
       return response.result.list.map((candle) => ({

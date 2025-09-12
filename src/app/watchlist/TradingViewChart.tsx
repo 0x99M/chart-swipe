@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BybitCandle } from "@/bybit/bybit.types";
 import { createChart, IChartApi, ISeriesApi, ColorType, CandlestickSeries, UTCTimestamp } from "lightweight-charts";
 
@@ -12,7 +12,7 @@ export default function TradingViewChart({ candles }: TradingViewChartProps) {
   const chartContainerRef = useRef<HTMLDivElement>(null)
   const chartRef = useRef<IChartApi | null>(null)
   const candleSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null)
-  const [hoveredCandleData, setHoveredCandleData] = React.useState<BybitCandle>(candles[0]);
+  const [hoveredCandleData, setHoveredCandleData] = useState<BybitCandle>(candles[0]);
 
   useEffect(() => {
     if (!chartContainerRef.current) return

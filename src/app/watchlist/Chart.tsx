@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useWatchlist } from "@/watchlist/watchlist.hooks";
 import TradingViewChart from "./TradingViewChart";
 import { useBybitCandles, useBybitTickersMap } from "@/bybit/bybit.hooks";
@@ -8,7 +8,20 @@ import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { useWatchlistStore } from "@/watchlist/watchlist.store";
 
+type Interval = "5" | "15" | "60" | "240" | "D" | "W";
+
 export default function Chart() {
+  const intervals: { value: Interval, label: string }[] = [
+    { value: "5", label: "5m" },
+    { value: "15", label: "15m" },
+    { value: "60", label: "1h" },
+    { value: "240", label: "4h" },
+    { value: "D", label: "1D" },
+    { value: "W", label: "1W" },
+  ];
+
+  const [selectedInterval, setSelectedInterval] = useState<Interval>("240");
+
   const { data: watchlist } = useWatchlist();
   const { data: tickersMap } = useBybitTickersMap();
 
@@ -26,7 +39,7 @@ export default function Chart() {
   const { data: candles } = useBybitCandles({
     symbol: symbol,
     limit: 500,
-    interval: "240",
+    interval: selectedInterval,
   });
 
   const touchStartY = useRef<number | null>(null);
@@ -61,6 +74,21 @@ export default function Chart() {
       <Button onClick={closeChart} variant="ghost" className="m-0 p-0" >
         <X className="h-4 w-4" />
       </Button>
+      <div className="flex gap-4 justify-center items-center text-xs" >
+        {intervals.map((interval) => (
+          <div
+            key={interval.value}
+            onClick={() => setSelectedInterval(interval.value)}
+            className={
+              `cursor-pointer px-2 py-1 rounded-md transition-colors ${selectedInterval === interval.value
+                ? "text-white"
+                : "text-white/25 hover:text-white"
+              }`}
+          >
+            {interval.label}
+          </div>
+        ))}
+      </div>
       <TradingViewChart candles={candles || []} />
     </div>
   );
