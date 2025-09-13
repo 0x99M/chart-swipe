@@ -86,7 +86,7 @@ export default function Chart() {
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <div className="h-2" />
+      <div />
       <div className="w-full p-4 flex justify-between items-center">
         <div className="flex flex-col justify-center items-start">
           <span className="font-bold text-lg">{symbol}/USDT</span>
@@ -108,8 +108,8 @@ export default function Chart() {
             key={interval.value}
             onClick={() => setSelectedInterval(interval.value)}
             className={`cursor-pointer px-2 py-1 rounded-md transition-colors ${selectedInterval === interval.value
-                ? "text-white"
-                : "text-white/25 hover:text-white"
+              ? "text-white"
+              : "text-white/25 hover:text-white"
               }`}
           >
             {interval.label}
