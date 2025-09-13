@@ -91,6 +91,15 @@ export default function CandlesView({ candles }: Props) {
         close: c.close,
       })))
     }
+
+    if (candles.length > 0 && chartRef.current) {
+      const lastIndex = candles.length - 1;
+      const startIndex = Math.max(0, lastIndex - 200);
+      chartRef.current.timeScale().setVisibleRange({
+        from: candles[startIndex].time as UTCTimestamp,
+        to: candles[lastIndex].time as UTCTimestamp,
+      });
+    }
   }, [candles]);
 
   return (
