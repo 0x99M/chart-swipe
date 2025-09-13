@@ -82,11 +82,11 @@ export default function Chart() {
 
   return (
     <div
-      className="h-screen w-full flex flex-col justify-start items-center gap-4"
+      className="w-full flex flex-col justify-start items-center gap-4"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <div className="h-12" />
+      <div className="h-8" />
       <div className="w-full p-4 flex justify-between items-center">
         <div className="flex flex-col justify-center items-start">
           <span className="font-bold text-lg">{symbol}/USDT</span>
