@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useClerk, UserButton } from "@clerk/nextjs";
+import { useClerk } from "@clerk/nextjs";
 
 export default function Profile() {
   const { signOut } = useClerk();
