@@ -16,7 +16,7 @@ export function WatchlistItem({ ticker, onRemove, onMoveToTop }: Props) {
 
   const symbol = ticker.symbol;
   const change = parseFloat(ticker.price24hPcnt || "0") * 100;
-  const color = change > 0 ? "text-green-400" : "text-red-500";
+  const color = change > 0 ? "text-custom-green" : "text-custom-red";
   const volume = parseFloat(ticker.volume24h || "0") * parseFloat(ticker.lastPrice || "0");
 
   return (

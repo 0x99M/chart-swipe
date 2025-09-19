@@ -76,6 +76,8 @@
   --sidebar-accent-foreground: #F8F8F2;
   --sidebar-border: #282A36;
   --sidebar-ring: #BD93F9;
+  --color-green: #50FA7B;
+  --color-red: #FF5555;
 }
 
 .dark {
@@ -110,6 +112,9 @@
   --sidebar-accent-foreground: #F8F8F2;
   --sidebar-border: #282A36;
   --sidebar-ring: #BD93F9;
+  /* Custom color variables */
+  --color-green: #50FA7B;
+  --color-red: #FF5555;
 }
 
 @layer base {
@@ -127,6 +132,15 @@
     /* whatever selector you use */
     border-width: 0 !important;
   }
+}
+
+/* Custom color classes */
+.text-custom-green {
+  color: var(--color-green);
+}
+
+.text-custom-red {
+  color: var(--color-red);
 }
 
 body {

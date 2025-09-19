@@ -48,8 +48,8 @@ export default function CandlesView({ candles }: Props) {
 
     chartRef.current = chart;
 
-    const GREEN = "#4ade80";
-    const RED = "#ef4444";
+    const GREEN = "#50FA7B";
+    const RED = "#FF5555";
 
     const newSeries = chart.addSeries(CandlestickSeries, {
       upColor: GREEN,

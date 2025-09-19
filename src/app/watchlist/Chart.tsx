@@ -37,7 +37,7 @@ export default function Chart() {
   const symbol = sortedSymbols[index]?.coin ?? "BTC";
   const symbolData = tickersMap ? tickersMap[symbol] : null;
   const change24h = parseFloat(symbolData?.price24hPcnt || "0") * 100;
-  const changeColor = change24h > 0 ? "text-green-400" : "text-red-500";
+  const changeColor = change24h > 0 ? "text-custom-green" : "text-custom-red";
 
   const { data: candles } = useBybitCandles({
     symbol: symbol,
@@ -119,7 +119,7 @@ export default function Chart() {
       <div className="h-4" ></div>
       <div
         id="swipe-area"
-        className="w-16 h-16 bg-secondary rounded-md flex justify-center items-center"
+        className="w-16 h-16 bg-muted rounded-md flex justify-center items-center"
       >
         <Move className="text-white w-6 h-6" />
       </div>
