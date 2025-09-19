@@ -36,9 +36,14 @@ A layer to handle coming request from the frontend services.
 ### VI. Controllers
 A layer to handle backend logic like calling the database.
 
-### VII. Supabase
-The infrastructure (Database) and auth layer.
+### VII. Data and Auth
+This app now uses MongoDB for data storage and a minimal cookie-based auth for simplicity.
 
-#### 1. Auth
+- Storage: Each user's data is stored in a single document in the `users` collection, including their `watchlist` array.
+- Auth: The login form creates/fetches a user by email and stores a `user_id` cookie. Passwords are not verified in this demo setup.
 
-#### 2. Database
+Environment variables:
+- MONGODB_URI: The MongoDB connection string (required)
+- MONGODB_DB: The database name (optional, defaults to `chart-swipe`)
+- NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: Clerk publishable key (required)
+- CLERK_SECRET_KEY: Clerk secret key (required)

@@ -1,9 +1,9 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { SignIn } from "@clerk/nextjs";
+import { SignUp } from "@clerk/nextjs";
 
-export default function LoginPage() {
+export default function SignUpPage() {
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="h-18" ></div>
@@ -14,7 +14,7 @@ export default function LoginPage() {
           </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col justify-center items-center" >
-          <SignIn routing="hash" />
+          <SignUp routing="hash" />
         </CardContent>
       </Card>
     </div>

@@ -1,15 +1,17 @@
-import { Database } from "@/shared/shared.types";
+export type WatchlistRow = {
+  id: number;
+  coin: string;
+  position: number;
+  created_at: string;
+};
 
-export type WatchlistRow = Database["public"]["Tables"]["watchlist"]["Row"];
+export type WatchlistInsert = {
+  coin: string;
+};
 
-export type WatchlistInsert = Pick<
-  Database["public"]["Tables"]["watchlist"]["Insert"],
-  "coin"
->;
-
-export type WatchlistUpdate = Pick<
-  Database["public"]["Tables"]["watchlist"]["Update"],
-  "id" | "position"
->;
+export type WatchlistUpdate = {
+  id: number;
+  position: number;
+};
 
 export type Sort = "position" | "gainers" | "losers";
