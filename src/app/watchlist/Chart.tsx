@@ -119,9 +119,9 @@ export default function Chart() {
       <div className="h-4" ></div>
       <div
         id="swipe-area"
-        className="w-16 h-16 bg-muted rounded-md flex justify-center items-center"
+        className="w-16 h-16 bg-background rounded-md flex justify-center items-center"
       >
-        <Move className="text-white w-6 h-6" />
+        <Move className="text-white opacity-25 w-6 h-6" />
       </div>
     </div>
   );

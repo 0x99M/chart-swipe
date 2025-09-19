@@ -9,13 +9,11 @@ type Props = {
 }
 
 export default function CandlesView({ candles }: Props) {
-  const lastPrice = (candles[candles.length - 1]?.close || 0);
-
   const chartContainerRef = useRef<HTMLDivElement>(null)
   const chartRef = useRef<IChartApi | null>(null)
   const candleSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null)
-
   const [priceRangeChange, setPriceRangeChange] = useState(0);
+  const [lineY, setLineY] = useState<number | null>(null);
 
   useEffect(() => {
     if (!chartContainerRef.current) return
@@ -54,7 +52,6 @@ export default function CandlesView({ candles }: Props) {
 
     const GREEN = "#50FA7B";
     const RED = "#FF5555";
-
     const newSeries = chart.addSeries(CandlestickSeries, {
       upColor: GREEN,
       downColor: RED,
@@ -87,6 +84,18 @@ export default function CandlesView({ candles }: Props) {
 
   useEffect(() => {
     setPriceRangeChange(0);
+    setLineY(null);
+
+    if (!chartContainerRef.current) return;
+
+    const handlePointerDown = (e: PointerEvent) => {
+      const rect = chartContainerRef.current!.getBoundingClientRect();
+      const relativeY = e.clientY - rect.top;
+      setLineY(relativeY);
+    };
+
+    chartContainerRef.current.addEventListener('pointerdown', handlePointerDown);
+
     if (candleSeriesRef.current && candles) {
       candleSeriesRef.current.setData(candles.map((c) => ({
         time: c.time as UTCTimestamp,
@@ -98,7 +107,6 @@ export default function CandlesView({ candles }: Props) {
 
       const chart = chartRef.current;
       const newSeries = candleSeriesRef.current;
-
       if (!chart || !newSeries) return;
 
       chart.subscribeClick((param: MouseEventParams) => {
@@ -106,14 +114,19 @@ export default function CandlesView({ candles }: Props) {
           setPriceRangeChange(0);
           return;
         }
-
+        const lastPrice = (candles[candles.length - 1]?.close || 0);
         const seriesPrice = newSeries.coordinateToPrice(param.point.y);
-
         setPriceRangeChange(
           Number((((seriesPrice || 0) - lastPrice) / lastPrice * 100).toFixed(2))
         );
       });
     }
+
+    return () => {
+      if (chartContainerRef.current) {
+        chartContainerRef.current.removeEventListener('pointerdown', handlePointerDown);
+      }
+    };
   }, [candles]);
 
   return (
@@ -121,8 +134,14 @@ export default function CandlesView({ candles }: Props) {
       <div>{priceRangeChange}%</div>
       <div
         ref={chartContainerRef}
-        className="w-full aspect-square"
+        className="w-full aspect-square relative"
       >
+        {lineY !== null && (
+          <div
+            className="absolute left-0 right-0 h-0.5 border-t-1 border-dashed border-gray-500 pointer-events-none z-10 opacity-80"
+            style={{ top: lineY }}
+          />
+        )}
       </div>
     </div>
   );
