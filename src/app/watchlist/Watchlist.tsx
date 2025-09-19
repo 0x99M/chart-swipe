@@ -41,7 +41,7 @@ export default function Watchlist() {
   };
 
   return (
-    <div className="w-full flex flex-col items-center p-8">
+    <div className="w-full flex flex-col items-center p-4">
       <div className="w-full flex flex-col items-center justify-between gap-8">
         <div className="w-full flex justify-center items-center gap-2">
           <TickerSelect
