@@ -1,17 +1,21 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BybitCandle } from "@/bybit/bybit.types";
-import { createChart, IChartApi, ISeriesApi, ColorType, CandlestickSeries, UTCTimestamp } from "lightweight-charts";
+import { createChart, IChartApi, ISeriesApi, ColorType, CandlestickSeries, UTCTimestamp, MouseEventParams } from "lightweight-charts";
 
 type Props = {
   candles: BybitCandle[];
 }
 
 export default function CandlesView({ candles }: Props) {
+  const lastPrice = (candles[candles.length - 1]?.close || 0);
+
   const chartContainerRef = useRef<HTMLDivElement>(null)
   const chartRef = useRef<IChartApi | null>(null)
   const candleSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null)
+
+  const [priceRangeChange, setPriceRangeChange] = useState(0);
 
   useEffect(() => {
     if (!chartContainerRef.current) return
@@ -82,6 +86,7 @@ export default function CandlesView({ candles }: Props) {
   }, []);
 
   useEffect(() => {
+    setPriceRangeChange(0);
     if (candleSeriesRef.current && candles) {
       candleSeriesRef.current.setData(candles.map((c) => ({
         time: c.time as UTCTimestamp,
@@ -90,11 +95,30 @@ export default function CandlesView({ candles }: Props) {
         low: c.low,
         close: c.close,
       })))
+
+      const chart = chartRef.current;
+      const newSeries = candleSeriesRef.current;
+
+      if (!chart || !newSeries) return;
+
+      chart.subscribeClick((param: MouseEventParams) => {
+        if (!param.point) {
+          setPriceRangeChange(0);
+          return;
+        }
+
+        const seriesPrice = newSeries.coordinateToPrice(param.point.y);
+
+        setPriceRangeChange(
+          Number((((seriesPrice || 0) - lastPrice) / lastPrice * 100).toFixed(2))
+        );
+      });
     }
   }, [candles]);
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
+      <div>{priceRangeChange}%</div>
       <div
         ref={chartContainerRef}
         className="w-full aspect-square"
