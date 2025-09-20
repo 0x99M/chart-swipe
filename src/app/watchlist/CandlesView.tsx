@@ -9,10 +9,11 @@ type Props = {
 }
 
 export default function CandlesView({ candles }: Props) {
-  const chartContainerRef = useRef<HTMLDivElement>(null)
-  const chartRef = useRef<IChartApi | null>(null)
-  const candleSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null)
-  const [priceRangeChange, setPriceRangeChange] = useState(0);
+  const chartContainerRef = useRef<HTMLDivElement>(null);
+  const chartRef = useRef<IChartApi | null>(null);
+  const candleSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
+  const [isPriceRangeChangeEnabled, setIsPriceRangeChangeEnabled] = useState<boolean>(false);
+  const [priceRangeChange, setPriceRangeChange] = useState<number>(0);
   const [lineY, setLineY] = useState<number | null>(null);
 
   useEffect(() => {
@@ -79,59 +80,86 @@ export default function CandlesView({ candles }: Props) {
         chartRef.current.remove();
         chartRef.current = null;
       }
+      if (chartContainerRef.current) {
+        chartContainerRef.current.remove();
+        chartContainerRef.current = null;
+      }
     };
   }, []);
 
   useEffect(() => {
+    setIsPriceRangeChangeEnabled(false);
     setPriceRangeChange(0);
     setLineY(null);
 
-    if (!chartContainerRef.current) return;
+    if (!candleSeriesRef.current || !candles) return;
 
-    const handlePointerDown = (e: PointerEvent) => {
-      const rect = chartContainerRef.current!.getBoundingClientRect();
-      const relativeY = e.clientY - rect.top;
-      setLineY(relativeY);
+    candleSeriesRef.current.setData(candles.map((c) => ({
+      time: c.time as UTCTimestamp,
+      open: c.open,
+      high: c.high,
+      low: c.low,
+      close: c.close,
+    })));
+  }, [candles]);
+
+  useEffect(() => {
+    if (!chartContainerRef.current || !candles) return;
+
+    const container = chartContainerRef.current;
+    const chart = chartRef.current;
+    const series = candleSeriesRef.current;
+    if (!chart || !series) return;
+
+    const lastPrice = () => candles[candles.length - 1]?.close ?? 0;
+
+    const onPointerDown = (e: PointerEvent) => {
+      if (!isPriceRangeChangeEnabled) return;
+      const rect = container.getBoundingClientRect();
+      setLineY(e.clientY - rect.top);
     };
 
-    chartContainerRef.current.addEventListener('pointerdown', handlePointerDown);
+    const onChartClick = (param: MouseEventParams) => {
+      if (!isPriceRangeChangeEnabled) return;
 
-    if (candleSeriesRef.current && candles) {
-      candleSeriesRef.current.setData(candles.map((c) => ({
-        time: c.time as UTCTimestamp,
-        open: c.open,
-        high: c.high,
-        low: c.low,
-        close: c.close,
-      })))
+      if (!param.point) {
+        setPriceRangeChange(0);
+        return;
+      }
 
-      const chart = chartRef.current;
-      const newSeries = candleSeriesRef.current;
-      if (!chart || !newSeries) return;
+      const lp = lastPrice();
+      if (!lp) return;
 
-      chart.subscribeClick((param: MouseEventParams) => {
-        if (!param.point) {
-          setPriceRangeChange(0);
-          return;
-        }
-        const lastPrice = (candles[candles.length - 1]?.close || 0);
-        const seriesPrice = newSeries.coordinateToPrice(param.point.y);
-        setPriceRangeChange(
-          Number((((seriesPrice || 0) - lastPrice) / lastPrice * 100).toFixed(2))
-        );
-      });
-    }
+      const seriesPrice = series.coordinateToPrice(param.point.y) || 0;
+      const pct = ((seriesPrice - lp) / lp) * 100;
+      setPriceRangeChange(Number(pct.toFixed(2)));
+    };
+
+    container.addEventListener('pointerdown', onPointerDown);
+    chart.subscribeClick(onChartClick);
 
     return () => {
-      if (chartContainerRef.current) {
-        chartContainerRef.current.removeEventListener('pointerdown', handlePointerDown);
-      }
+      container.removeEventListener('pointerdown', onPointerDown);
+      chart.unsubscribeClick(onChartClick);
     };
-  }, [candles]);
+  }, [isPriceRangeChangeEnabled]);
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
-      <div>{priceRangeChange}%</div>
+      <div
+        onClick={() => {
+          setIsPriceRangeChangeEnabled(enabled => {
+            const next = !enabled;
+            if (!next) {
+              setPriceRangeChange(0);
+              setLineY(null);
+            }
+            return next;
+          });
+        }}
+        className={`${isPriceRangeChangeEnabled ? 'text-white' : 'text-gray-500'}`}
+      >{priceRangeChange}%
+      </div>
       <div
         ref={chartContainerRef}
         className="w-full aspect-square relative"
