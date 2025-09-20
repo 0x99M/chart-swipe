@@ -38,6 +38,7 @@ export default function Chart() {
   const symbolData = tickersMap ? tickersMap[symbol] : null;
   const change24h = parseFloat(symbolData?.price24hPcnt || "0") * 100;
   const changeColor = change24h > 0 ? "text-custom-green" : "text-custom-red";
+  const volume = parseFloat(symbolData?.volume24h || "0") * parseFloat(symbolData?.lastPrice || "0");
 
   const { data: candles } = useBybitCandles({
     symbol: symbol,
@@ -97,7 +98,7 @@ export default function Chart() {
             {symbolData && symbolData.lastPrice}
           </span>
           <span className="text-white/30 text-sm">
-            {symbolData && formatCompact(parseFloat(symbolData.volume24h))} USDT
+            {symbolData && formatCompact(volume)} USDT
           </span>
         </div>
       </div>
