@@ -1,12 +1,13 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useWatchlist } from "@/watchlist/watchlist.hooks";
 import CandlesView from "./CandlesView";
 import { useBybitCandles, useBybitTickersMap } from "@/bybit/bybit.hooks";
 import { useWatchlistStore } from "@/watchlist/watchlist.store";
 import { formatCompact } from "@/shared/numbers.utils";
-import { ChevronUp, ChevronDown } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type Interval = "5" | "15" | "60" | "240" | "D" | "W";
 
@@ -99,21 +100,21 @@ export default function Chart() {
         ))}
       </div>
       <div />
-      <div className="flex flex-col items-center">
-        <button
+      <div className="flex items-center gap-8">
+        <Button
           onClick={handlePreviousChart}
           className="w-12 h-12 bg-background rounded-md flex justify-center items-center hover:bg-background/80 transition-colors"
           aria-label="Previous chart"
         >
-          <ChevronUp className="text-white w-6 h-6" />
-        </button>
-        <button
+          <ChevronLeft className="text-white w-6 h-6" />
+        </Button>
+        <Button
           onClick={handleNextChart}
           className="w-12 h-12 bg-background rounded-md flex justify-center items-center hover:bg-background/80 transition-colors"
           aria-label="Next chart"
         >
-          <ChevronDown className="text-white w-6 h-6" />
-        </button>
+          <ChevronRight className="text-white w-6 h-6" />
+        </Button>
       </div>
     </div>
   );
