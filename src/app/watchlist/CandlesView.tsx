@@ -2,22 +2,32 @@
 
 import { useEffect, useRef, useState } from "react";
 import { BybitCandle } from "@/bybit/bybit.types";
-import { createChart, IChartApi, ISeriesApi, ColorType, CandlestickSeries, UTCTimestamp, MouseEventParams } from "lightweight-charts";
+import {
+  createChart,
+  IChartApi,
+  ISeriesApi,
+  ColorType,
+  CandlestickSeries,
+  UTCTimestamp,
+  MouseEventParams,
+} from "lightweight-charts";
 
 type Props = {
   candles: BybitCandle[];
-}
+};
 
 export default function CandlesView({ candles }: Props) {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const candleSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
-  const [isPriceRangeChangeEnabled, setIsPriceRangeChangeEnabled] = useState<boolean>(false);
+  const [isPriceRangeChangeEnabled, setIsPriceRangeChangeEnabled] =
+    useState<boolean>(false);
   const [priceRangeChange, setPriceRangeChange] = useState<number>(0);
   const [lineY, setLineY] = useState<number | null>(null);
+  const [linePrice, setLinePrice] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!chartContainerRef.current) return
+    if (!chartContainerRef.current) return;
 
     const chart = createChart(chartContainerRef.current, {
       width: chartContainerRef.current.clientWidth,
@@ -65,8 +75,12 @@ export default function CandlesView({ candles }: Props) {
 
     candleSeriesRef.current = newSeries;
 
-    const resizeObserver = new ResizeObserver(entries => {
-      if (entries.length === 0 || entries[0].target !== chartContainerRef.current) return;
+    const resizeObserver = new ResizeObserver((entries) => {
+      if (
+        entries.length === 0 ||
+        entries[0].target !== chartContainerRef.current
+      )
+        return;
       const { width, height } = entries[0].contentRect;
       chart.applyOptions({ width, height });
     });
@@ -91,16 +105,19 @@ export default function CandlesView({ candles }: Props) {
     setIsPriceRangeChangeEnabled(false);
     setPriceRangeChange(0);
     setLineY(null);
+    setLinePrice(null);
 
     if (!candleSeriesRef.current || !candles) return;
 
-    candleSeriesRef.current.setData(candles.map((c) => ({
-      time: c.time as UTCTimestamp,
-      open: c.open,
-      high: c.high,
-      low: c.low,
-      close: c.close,
-    })));
+    candleSeriesRef.current.setData(
+      candles.map((c) => ({
+        time: c.time as UTCTimestamp,
+        open: c.open,
+        high: c.high,
+        low: c.low,
+        close: c.close,
+      }))
+    );
   }, [candles]);
 
   useEffect(() => {
@@ -116,7 +133,11 @@ export default function CandlesView({ candles }: Props) {
     const onPointerDown = (e: PointerEvent) => {
       if (!isPriceRangeChangeEnabled) return;
       const rect = container.getBoundingClientRect();
-      setLineY(e.clientY - rect.top);
+      const y = e.clientY - rect.top;
+      setLineY(y);
+
+      const price = series.coordinateToPrice(y);
+      setLinePrice(price);
     };
 
     const onChartClick = (param: MouseEventParams) => {
@@ -135,11 +156,11 @@ export default function CandlesView({ candles }: Props) {
       setPriceRangeChange(Number(pct.toFixed(2)));
     };
 
-    container.addEventListener('pointerdown', onPointerDown);
+    container.addEventListener("pointerdown", onPointerDown);
     chart.subscribeClick(onChartClick);
 
     return () => {
-      container.removeEventListener('pointerdown', onPointerDown);
+      container.removeEventListener("pointerdown", onPointerDown);
       chart.unsubscribeClick(onChartClick);
     };
   }, [isPriceRangeChangeEnabled]);
@@ -148,27 +169,44 @@ export default function CandlesView({ candles }: Props) {
     <div className="w-full flex flex-col justify-center items-center">
       <div
         onClick={() => {
-          setIsPriceRangeChangeEnabled(enabled => {
+          setIsPriceRangeChangeEnabled((enabled) => {
             const next = !enabled;
             if (!next) {
               setPriceRangeChange(0);
               setLineY(null);
+              setLinePrice(null);
             }
             return next;
           });
         }}
-        className={`${isPriceRangeChangeEnabled ? 'text-white' : 'text-gray-500'}`}
-      >{priceRangeChange}%
-      </div>
-      <div
-        ref={chartContainerRef}
-        className="w-full aspect-square relative"
+        className={`${
+          isPriceRangeChangeEnabled ? "text-white" : "text-gray-500"
+        }`}
       >
+        {priceRangeChange}%
+      </div>
+      <div ref={chartContainerRef} className="w-full aspect-square relative">
         {lineY !== null && (
-          <div
-            className="absolute left-0 right-0 h-0.5 border-t-1 border-dashed border-gray-500 pointer-events-none z-10 opacity-80"
-            style={{ top: lineY }}
-          />
+          <>
+            <div
+              className="absolute left-0 right-0 h-0.5 border-t-1 border-dashed border-gray-500 pointer-events-none z-10 opacity-80"
+              style={{ top: lineY }}
+            />
+            {linePrice !== null && (
+              <div
+                className="absolute text-white text-xs rounded pointer-events-none z-20"
+                style={{
+                  top: lineY - 9,
+                  right: 0,
+                  margin: "0 2px",
+                  backgroundColor: "#282A36",
+                  zIndex: 20,
+                }}
+              >
+                {linePrice.toFixed(5)}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
