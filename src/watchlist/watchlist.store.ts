@@ -34,6 +34,15 @@ export const useWatchlistStore = create<WatchlistState>((set, get) => ({
         return sort === "gainers" ? pctB - pctA : pctA - pctB;
       });
     }
+    if (sort === "coin-asc" || sort === "coin-desc") {
+      return watchlist.slice().sort((a, b) => {
+        const coinA = a.coin.toLowerCase();
+        const coinB = b.coin.toLowerCase();
+        return sort === "coin-asc"
+          ? coinA.localeCompare(coinB)
+          : coinB.localeCompare(coinA);
+      });
+    }
     return watchlist;
   },
 

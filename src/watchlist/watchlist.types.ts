@@ -14,4 +14,4 @@ export type WatchlistUpdate = {
   position: number;
 };
 
-export type Sort = "position" | "gainers" | "losers";
+export type Sort = "position" | "gainers" | "losers" | "coin-asc" | "coin-desc";
