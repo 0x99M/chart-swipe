@@ -6,7 +6,7 @@ import CandlesView from "./CandlesView";
 import { useBybitCandles, useBybitTickersMap } from "@/bybit/bybit.hooks";
 import { useWatchlistStore } from "@/watchlist/watchlist.store";
 import { formatCompact } from "@/shared/numbers.utils";
-import { Move } from "lucide-react";
+import { ChevronUp, ChevronDown } from "lucide-react";
 
 type Interval = "5" | "15" | "60" | "240" | "D" | "W";
 
@@ -38,7 +38,9 @@ export default function Chart() {
   const symbolData = tickersMap ? tickersMap[symbol] : null;
   const change24h = parseFloat(symbolData?.price24hPcnt || "0") * 100;
   const changeColor = change24h > 0 ? "text-custom-green" : "text-custom-red";
-  const volume = parseFloat(symbolData?.volume24h || "0") * parseFloat(symbolData?.lastPrice || "0");
+  const volume =
+    parseFloat(symbolData?.volume24h || "0") *
+    parseFloat(symbolData?.lastPrice || "0");
 
   const { data: candles } = useBybitCandles({
     symbol: symbol,
@@ -46,30 +48,12 @@ export default function Chart() {
     interval: selectedInterval,
   });
 
-  const touchStartY = useRef<number | null>(null);
-  const swipeActive = useRef<boolean>(false);
-  const SWIPE_THRESHOLD = 50;
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!(e.target as HTMLElement).closest("#swipe-area")) {
-      swipeActive.current = false;
-      return;
-    }
-    swipeActive.current = true;
-    touchStartY.current = e.touches[0].clientY;
+  const handlePreviousChart = () => {
+    prevChart(watchlist?.length || 0);
   };
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (!swipeActive.current || touchStartY.current === null) return;
-    const endY = e.changedTouches[0].clientY;
-    const deltaY = endY - touchStartY.current;
-    if (deltaY > SWIPE_THRESHOLD) {
-      prevChart(watchlist?.length || 0);
-    } else if (deltaY < -SWIPE_THRESHOLD) {
-      nextChart(watchlist?.length || 0);
-    }
-    touchStartY.current = null;
-    swipeActive.current = false;
+  const handleNextChart = () => {
+    nextChart(watchlist?.length || 0);
   };
 
   useEffect(() => {
@@ -82,11 +66,7 @@ export default function Chart() {
   }, [closeChart]);
 
   return (
-    <div
-      className="w-full flex flex-col justify-start items-center gap-4"
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-    >
+    <div className="w-full flex flex-col justify-start items-center gap-4">
       <div />
       <div className="w-full p-4 flex justify-between items-center">
         <div className="flex flex-col justify-center items-start">
@@ -108,21 +88,32 @@ export default function Chart() {
           <div
             key={interval.value}
             onClick={() => setSelectedInterval(interval.value)}
-            className={`cursor-pointer px-2 py-1 rounded-md transition-colors ${selectedInterval === interval.value
-              ? "text-white"
-              : "text-white/25 hover:text-white"
-              }`}
+            className={`cursor-pointer px-2 py-1 rounded-md transition-colors ${
+              selectedInterval === interval.value
+                ? "text-white"
+                : "text-white/25 hover:text-white"
+            }`}
           >
             {interval.label}
           </div>
         ))}
       </div>
-      <div className="h-4" ></div>
-      <div
-        id="swipe-area"
-        className="w-16 h-16 bg-background rounded-md flex justify-center items-center"
-      >
-        <Move className="text-white opacity-25 w-6 h-6" />
+      <div />
+      <div className="flex flex-col items-center">
+        <button
+          onClick={handlePreviousChart}
+          className="w-12 h-12 bg-background rounded-md flex justify-center items-center hover:bg-background/80 transition-colors"
+          aria-label="Previous chart"
+        >
+          <ChevronUp className="text-white w-6 h-6" />
+        </button>
+        <button
+          onClick={handleNextChart}
+          className="w-12 h-12 bg-background rounded-md flex justify-center items-center hover:bg-background/80 transition-colors"
+          aria-label="Next chart"
+        >
+          <ChevronDown className="text-white w-6 h-6" />
+        </button>
       </div>
     </div>
   );
