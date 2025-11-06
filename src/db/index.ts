@@ -11,7 +11,6 @@ if (!connectionString) {
 // Global connection instance for Next.js serverless environment
 // This ensures connection reuse across function invocations
 declare global {
-  // eslint-disable-next-line no-var
   var postgresClient: postgres.Sql | undefined;
 }
 

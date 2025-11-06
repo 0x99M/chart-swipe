@@ -15,7 +15,7 @@ function mapToRows(coins: string[]): WatchlistRow[] {
   }));
 }
 
-async function getAll(req: Request) {
+async function getAll() {
   const { userId } = await auth();
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
