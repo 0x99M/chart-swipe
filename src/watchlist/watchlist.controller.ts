@@ -1,15 +1,10 @@
-import { getUsersCollection, UserDoc } from "@/utils/mongodb";
+import { ensureUser, updateUserWatchlist } from "@/db/db";
 import { auth } from "@clerk/nextjs/server";
-import { WatchlistInsert, WatchlistRow, WatchlistUpdate } from "./watchlist.types";
-
-async function ensureUser(userId: string): Promise<UserDoc> {
-  const users = await getUsersCollection();
-  const existing = await users.findOne({ _id: userId });
-  if (existing) return existing;
-  const doc: UserDoc = { _id: userId, watchlist: [] } as UserDoc;
-  await users.insertOne(doc);
-  return doc;
-}
+import {
+  WatchlistInsert,
+  WatchlistRow,
+  WatchlistUpdate,
+} from "./watchlist.types";
 
 function mapToRows(coins: string[]): WatchlistRow[] {
   return coins.map((coin, i) => ({
@@ -34,15 +29,15 @@ async function create(req: Request) {
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   const body: WatchlistInsert = await req.json();
-  if (!body?.coin) return Response.json({ error: "Missing coin" }, { status: 400 });
+  if (!body?.coin)
+    return Response.json({ error: "Missing coin" }, { status: 400 });
 
-  const users = await getUsersCollection();
   const user = await ensureUser(userId);
 
   const coins = user.watchlist || [];
   if (!coins.includes(body.coin)) coins.push(body.coin);
 
-  await users.updateOne({ _id: userId }, { $set: { watchlist: coins } }, { upsert: true });
+  await updateUserWatchlist(userId, coins);
 
   // return the newly added item as row
   const index = coins.indexOf(body.coin);
@@ -70,7 +65,6 @@ async function update(req: Request, { params }: { params: { id: string } }) {
       { status: 400 }
     );
 
-  const users = await getUsersCollection();
   const user = await ensureUser(userId);
   const coins = (user.watchlist || []).slice();
 
@@ -83,7 +77,7 @@ async function update(req: Request, { params }: { params: { id: string } }) {
   coins.splice(toIndex, 0, coin);
 
   // overwrite the array as requested
-  await users.updateOne({ _id: userId }, { $set: { watchlist: coins } });
+  await updateUserWatchlist(userId, coins);
 
   return Response.json(mapToRows(coins));
 }
@@ -100,16 +94,16 @@ export async function deleteItem({ params }: { params: { id: string } }) {
     );
   }
 
-  const users = await getUsersCollection();
   const user = await ensureUser(userId);
   const coins = (user.watchlist || []).slice();
 
   const index = Math.max(0, parseInt(id) - 1);
-  if (index < 0 || index >= coins.length) return Response.json({ error: "Item not found" }, { status: 404 });
+  if (index < 0 || index >= coins.length)
+    return Response.json({ error: "Item not found" }, { status: 404 });
 
   coins.splice(index, 1);
 
-  await users.updateOne({ _id: userId }, { $set: { watchlist: coins } });
+  await updateUserWatchlist(userId, coins);
 
   return Response.json(mapToRows(coins));
 }
