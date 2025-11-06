@@ -52,3 +52,4 @@ export function WatchlistItem({ ticker, onRemove, onMoveToTop }: Props) {
     </ContextMenu>
   );
 }
+

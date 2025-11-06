@@ -70,3 +70,4 @@ export function TickerSelect({ tickers, value, onChange, open, onOpenChange }: P
     </div>
   );
 }
+
