@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useWatchlist } from "@/watchlist/watchlist.hooks";
+import { useWatchlist, useDeleteCoin } from "@/watchlist/watchlist.hooks";
 import CandlesView from "./CandlesView";
 import { useBybitCandles, useBybitTickersMap } from "@/bybit/bybit.hooks";
 import { useWatchlistStore } from "@/watchlist/watchlist.store";
 import { formatCompact } from "@/shared/numbers.utils";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type Interval = "5" | "15" | "60" | "240" | "D" | "W";
@@ -42,6 +42,9 @@ export default function Chart() {
   const volume =
     parseFloat(symbolData?.volume24h || "0") *
     parseFloat(symbolData?.lastPrice || "0");
+
+  const currentItem = sortedSymbols[index];
+  const { mutate: deleteCoin, isPending: deleting } = useDeleteCoin();
 
   const { data: candles } = useBybitCandles({
     symbol: symbol,
@@ -107,6 +110,22 @@ export default function Chart() {
           aria-label="Previous chart"
         >
           <ChevronLeft className="text-white w-6 h-6" />
+        </Button>
+        <Button
+          onClick={() => {
+            if (currentItem) {
+              deleteCoin(currentItem.id, { onSuccess: () => closeChart() });
+            }
+          }}
+          disabled={deleting}
+          className="w-12 h-12 bg-background rounded-md flex justify-center items-center text-white/30 hover:text-red-500 hover:bg-background/80 transition-colors"
+          aria-label="Delete from watchlist"
+        >
+          {deleting ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            <Trash2 className="w-5 h-5" />
+          )}
         </Button>
         <Button
           onClick={handleNextChart}
